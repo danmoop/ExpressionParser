@@ -1,3 +1,3 @@
 public interface Action {
-    int calculate(int a, int b);
+    float calculate(float a, float b);
 }
