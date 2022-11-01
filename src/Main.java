@@ -1,8 +1,9 @@
 public class Main {
     public static void main(String[] args) {
-        String query = "10-3/1+2+3-2*3*5+7/3/2/5*32+1/3+3+9-2*5*1*2-3+23";
+        String query = "87+3*75-32-96/55+74+71-0-15/60+69*18/74/92-61-7"; // ~ 355.18
+        String bracketQuery = "7-3+8+(3-6*3*2)+2-3*3/5+6"; // 78.2, doesn't work yet
 
-        ExpressionValidator exp = new ExpressionValidator();
-        System.out.println(exp.calculate(query));
+        MathValidator exp = new MathValidator();
+        System.out.println(exp.calculate(bracketQuery));
     }
 }
