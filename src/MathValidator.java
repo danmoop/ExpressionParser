@@ -12,42 +12,35 @@ public class MathValidator {
     }
 
     public float calculate(String query) {
-        String[] values = query.split("(?=[+-/*])|(?<=[+-/*])"); // xd
-
+        String[] values = query.split("(?=[+-/*()])|(?<=[+-/*()])");
         Deque<Float> numbers = new LinkedList<>();
         Deque<String> operations = new LinkedList<>();
-        Stack<Float> recursionCalculations = new Stack<>();
+        Stack<Float> st = new Stack<>();
 
-        Map<String, Action> actions = new HashMap<>();
-        actions.put("+", (a, b) -> a + b);
-        actions.put("-", (a, b) -> a - b);
-        actions.put("*", (a, b) -> a * b);
-        actions.put("/", (a, b) -> a / b);
-
-        for (int i = 0; i < values.length; i++ ){
-            String token = recursionCalculations.isEmpty() ? values[i] : recursionCalculations.pop().toString();
+        for (int i = 0; i < values.length; i++) {
+            String token = st.isEmpty() ? values[i] : String.valueOf(st.pop());
 
             if (isNumber(token)) {
                 String mostRecentOperation = operations.peekLast();
 
                 if (!operations.isEmpty() && (mostRecentOperation.equals("*") || mostRecentOperation.equals("/"))) {
-                    numbers.add(actions.get(operations.removeLast()).calculate(numbers.removeLast(), Integer.parseInt(token)));
+                    numbers.add(actions.get(operations.removeLast()).calculate(numbers.removeLast(), Float.parseFloat(token)));
                 } else {
                     numbers.add(Float.parseFloat(token));
                 }
             } else {
+                if (token.equals(")")) continue;
+
                 if (token.equals("(")) {
-                    float innerExpressionResult = calculate(extractInnerExpression(query, i + 1));
-                    recursionCalculations.push(innerExpressionResult);
-                    while (!values[i].equals(")")) i++;
+                    String innerExpression = extractInnerExpression(query, i + 1);
+                    float result = calculate(innerExpression);
+                    i += (innerExpression.length() - 1);
+
+                    st.push(result);
                 } else {
                     operations.add(token);
                 }
             }
-
-            System.out.println(numbers);
-            System.out.println(operations);
-            System.out.println("_____________________________");
         }
 
         while (!operations.isEmpty()) {
@@ -61,7 +54,7 @@ public class MathValidator {
 
     private String extractInnerExpression(String s, int start) {
         int end = start;
-        while (s.charAt(end) != ')') end++;
+        while (end < s.length() && s.charAt(end) != ')') end++;
         return s.substring(start, end);
     }
 
