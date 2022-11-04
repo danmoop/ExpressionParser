@@ -3,19 +3,52 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 public class Tests {
-    public static void main(String[] args) throws ScriptException {
-        // Generate 1000 strings to see if validations are correct
-        System.out.println(test(1000));
+    public static void main(String[] args) throws ScriptException, InterruptedException {
+        //  Generate 1000 strings to see if math validations are correct
+        testMathValidator(1000);
+
+        System.out.println("Math tests are done, proceeding to logic tests");
+        Thread.sleep(2000);
+
+        //  Generate 1000 strings to see if logic validations are correct
+        testBooleanValidator(1000);
     }
 
-    private static boolean test(int n) throws ScriptException {
+    private static boolean testBooleanValidator(int n) throws ScriptException {
+        LogicValidator lvad = new LogicValidator();
+        ScriptEngineManager mgr = new ScriptEngineManager();
+        ScriptEngine engine = mgr.getEngineByName("JavaScript");
+
+        for (int i = 0; i < n; i++) {
+            // Generate expressions of length "1 - 32" minimum
+            String str = generateRandomBooleanExpression((int) Math.ceil(Math.random() * 12));
+
+            // Evaluate using our Java logic
+            boolean javaValue = lvad.evaluate(str);
+
+            // Evaluate using JavaScript (gives correct result)
+            str = str.replace("&", "&&");
+            str = str.replace("|", "||");
+            boolean jsValue = String.valueOf(engine.eval(str)).equals("true");
+
+            System.out.println(str);
+            System.out.println("✔️" + (i + 1) + ": " + jsValue + " == " + javaValue);
+            System.out.println("___________________________");
+
+            if (jsValue != javaValue) return false;
+        }
+
+        return true;
+    }
+
+    private static boolean testMathValidator(int n) throws ScriptException {
         MathValidator exp = new MathValidator();
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
 
         for (int i = 0; i < n; i++) {
-            // Generate expressions of length "32" minimum
-            String str = generate(32);
+            // Generate expressions of length "1 - 32" minimum
+            String str = generateRandomMathExpression((int) Math.ceil(Math.random() * 32));
 
             // Evaluate using JavaScript (gives correct result)
             float jsValue = Float.parseFloat(String.valueOf(engine.eval(str)));
@@ -24,7 +57,7 @@ public class Tests {
             float javaValue = exp.calculate(str);
 
             System.out.println(str);
-            System.out.println("✔️" + (i + 1) + ": " + jsValue + ": " + javaValue);
+            System.out.println("✔️" + (i + 1) + ": " + jsValue + " == " + javaValue);
             System.out.println("___________________________");
 
             // If difference is small, it means both values are equal, so calculations are correct
@@ -34,7 +67,29 @@ public class Tests {
         return true;
     }
 
-    private static String generate(int length) {
+    private static String generateRandomBooleanExpression(int length) {
+        StringBuilder sb = new StringBuilder();
+        String[] actions = {"&", "|"};
+
+        for (int i = 0; i < length; i++) {
+            // Append random boolean and operator to the test expression
+            sb.append(Math.round(Math.random() * 100) <= 50);
+            sb.append(actions[(int) Math.floor(Math.random() * actions.length)]);
+
+            // Generate expressions inside expression with 6% chance.
+            if (Math.round(Math.random() * 100) < 6) {
+                sb.append("(");
+                sb.append(generateRandomBooleanExpression(6));
+                sb.append(")");
+                sb.append(actions[(int) Math.floor(Math.random() * actions.length)]);
+            }
+        }
+        sb.append(Math.round(Math.random() * 100) <= 50);
+
+        return sb.toString();
+    }
+
+    private static String generateRandomMathExpression(int length) {
         StringBuilder sb = new StringBuilder();
         String[] actions = {"+", "-", "*", "/"};
 
@@ -43,10 +98,10 @@ public class Tests {
             sb.append(Math.round(Math.random() * 5) + 1);
             sb.append(actions[(int) Math.floor(Math.random() * actions.length)]);
 
-            // Generate expressions inside expression with 5% chance.
-            if (Math.round(Math.random() * 100) < 5) {
+            // Generate expressions inside expression with 6% chance.
+            if (Math.round(Math.random() * 100) < 6) {
                 sb.append("(");
-                sb.append(generate(6));
+                sb.append(generateRandomMathExpression(6));
                 sb.append(")");
                 sb.append(actions[(int) Math.floor(Math.random() * actions.length)]);
             }

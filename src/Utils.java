@@ -1,5 +1,6 @@
 public class Utils {
-    private static final String REGEX = "(?=[+-/*()])|(?<=[+-/*()])";
+    private static final String MATH_REGEX = "(?=[+-/*()])|(?<=[+-/*()])";
+    private static final String LOGIC_REGEX = "(?=[&|()])|(?<=[&|()])";
 
     public static String extractExpression(String[] values, int index) {
         StringBuilder sb = new StringBuilder();
@@ -21,8 +22,12 @@ public class Utils {
         return sb.substring(0, i);
     }
 
-    public static String[] getExpressionTokens(String query) {
-        return query.split(REGEX);
+    public static String[] getMathExpressionTokens(String query) {
+        return query.split(MATH_REGEX);
+    }
+
+    public static String[] getLogicExpressionTokens(String query) {
+        return query.split(LOGIC_REGEX);
     }
 
     public static boolean isNumber(String s) {
@@ -33,5 +38,9 @@ public class Utils {
         }
 
         return true;
+    }
+
+    public static boolean isBoolean(String s) {
+        return s.equals("true") || s.equals("false");
     }
 }

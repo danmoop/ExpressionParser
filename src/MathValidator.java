@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class MathValidator {
-    private Map<String, Action> actions;
+    private Map<String, MathExpression> actions;
 
     public MathValidator() {
         actions = new HashMap<>();
@@ -15,7 +15,7 @@ public class MathValidator {
 
     public float calculate(String query) {
         // This one contains the array of values and operators separated
-        String[] values = Utils.getExpressionTokens(query);
+        String[] values = Utils.getMathExpressionTokens(query);
 
         // Double linked list containing all numbers and calculations
         Deque<Float> numbers = new LinkedList<>();
@@ -30,7 +30,7 @@ public class MathValidator {
 
             /*
              * token is a single element from the original expression we want to evaluate
-             * volues is an array of elements separated, so it might contain either a number or an operator
+             * values is an array of elements separated, so it might contain either a number or an operator
              * if there are some results from the recursion evaluation, take that one instead and process it
              *   since it is the most recent calculation
              */
@@ -65,7 +65,7 @@ public class MathValidator {
                     float result = calculate(innerExpression);
                     recursionStack.push(result);
 
-                    i += (Utils.getExpressionTokens(innerExpression).length);
+                    i += (Utils.getMathExpressionTokens(innerExpression).length);
                 } else {
                     operations.add(token);
                 }
