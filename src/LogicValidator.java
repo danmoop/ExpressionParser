@@ -24,6 +24,8 @@ public class LogicValidator {
         // Stack contains any calculation results from inner expressions, which should be added to the booleans queue
         Stack<Boolean> recursionStack = new Stack<>();
 
+        boolean shouldNegate = false;
+
         for (int i = 0; i < values.length; i++) {
             /*
              * token is a single element from the original expression we want to evaluate
@@ -42,10 +44,16 @@ public class LogicValidator {
             if (Utils.isBoolean(token)) {
                 String mostRecentOperation = operations.peekLast();
 
+                boolean bool = Boolean.parseBoolean(token);
+                if (shouldNegate) {
+                    bool = !bool;
+                    shouldNegate = false;
+                }
+
                 if (!operations.isEmpty() && (mostRecentOperation.equals("&"))) {
-                    booleans.add(actions.get(operations.removeLast()).evaluate(booleans.removeLast(), Boolean.parseBoolean(token)));
+                    booleans.add(actions.get(operations.removeLast()).evaluate(booleans.removeLast(), bool));
                 } else {
-                    booleans.add(Boolean.parseBoolean(token));
+                    booleans.add(bool);
                 }
             }
 
@@ -63,6 +71,8 @@ public class LogicValidator {
                     recursionStack.push(result);
 
                     i += (Utils.getLogicExpressionTokens(innerExpression).length);
+                } else if (token.equals("!")) {
+                    shouldNegate = true;
                 } else {
                     operations.add(token);
                 }

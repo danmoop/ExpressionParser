@@ -4,14 +4,14 @@ import javax.script.ScriptException;
 
 public class Tests {
     public static void main(String[] args) throws ScriptException, InterruptedException {
-        //  Generate 1000 strings to see if math validations are correct
-        testMathValidator(1000);
-
+//          Generate 1000 strings to see if math validations are correct
+        testMathValidator(10000);
+//
         System.out.println("Math tests are done, proceeding to logic tests");
         Thread.sleep(2000);
 
-        //  Generate 1000 strings to see if logic validations are correct
-        testBooleanValidator(1000);
+//          Generate 1000 strings to see if logic validations are correct
+        testBooleanValidator(10000);
     }
 
     private static boolean testBooleanValidator(int n) throws ScriptException {
@@ -73,6 +73,9 @@ public class Tests {
 
         for (int i = 0; i < length; i++) {
             // Append random boolean and operator to the test expression
+            if (Math.round(Math.random() * 100) < 20) {
+                sb.append("!");
+            }
             sb.append(Math.round(Math.random() * 100) <= 50);
             sb.append(actions[(int) Math.floor(Math.random() * actions.length)]);
 

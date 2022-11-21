@@ -1,6 +1,6 @@
 public class Utils {
     private static final String MATH_REGEX = "(?=[+-/*()])|(?<=[+-/*()])";
-    private static final String LOGIC_REGEX = "(?=[&|()])|(?<=[&|()])";
+    private static final String LOGIC_REGEX = "(?=[!&|()])|(?<=[!&|()])";
 
     public static String extractExpression(String[] values, int index) {
         StringBuilder sb = new StringBuilder();
