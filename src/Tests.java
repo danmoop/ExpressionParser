@@ -2,16 +2,18 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-public class Tests {
-    public static void main(String[] args) throws ScriptException, InterruptedException {
-//          Generate 1000 strings to see if math validations are correct
-        testMathValidator(10000);
-//
-        System.out.println("Math tests are done, proceeding to logic tests");
-        Thread.sleep(2000);
+/*
+ * This class is used to perform tests to make sure the algorithm is correct
+ * To do so, we calculate the result using our algorithm and compare results with JavaScript engine evaluation
+ */
 
-//          Generate 1000 strings to see if logic validations are correct
-        testBooleanValidator(10000);
+public class Tests {
+    public static void main(String[] args) throws ScriptException {
+        // Generate strings to see if math validations are correct
+        testMathValidator(1000);
+
+        // Generate strings to see if logic validations are correct
+        testBooleanValidator(1000);
     }
 
     private static boolean testBooleanValidator(int n) throws ScriptException {
